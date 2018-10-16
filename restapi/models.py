@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-
+from django.contrib.auth.models import User
 
 class SingletonModel(models.Model):
     class Meta:
@@ -44,5 +44,8 @@ class Project(models.Model):
     technologies = models.ManyToManyField("Technology", related_name="projects")
 
 
-
+class Message(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="messages")
+    subject = models.CharField(max_length=1000)
+    body = models.TextField()
 
