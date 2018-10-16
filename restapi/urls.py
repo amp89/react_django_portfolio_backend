@@ -17,10 +17,14 @@ from .views import *
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
+from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
-    path('connect/', ContactInfoView.as_view()),
-    path('info/', SiteInfoView.as_view()),
-    path('projects/', ProjectView.as_view()),
-    # path('connect/', ContactInfoView.as_view()),
+    path('connect/', csrf_exempt(ContactInfoView.as_view())),
+    path('info/', csrf_exempt(SiteInfoView.as_view())),
+    path('projects/', csrf_exempt(ProjectView.as_view())),
+    
+    path('login/', csrf_exempt(Login.as_view())),
+    path('logout/', csrf_exempt(Logout.as_view())),
+
 ]

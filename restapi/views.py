@@ -7,6 +7,8 @@ from django.views import View
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from .models import *
+from django.contrib.auth.models import User
+import json
 
 class GetUserViewMixin(View):
     def dispatch(self,request,*args,**kwargs):
@@ -78,3 +80,24 @@ class ProjectView(View):
         project_dict = list(Project.objects.select_related().all().order_by("-datetime").values())
         return JsonResponse(project_dict,safe=False)
 
+
+class Login(View):
+    def post(self,request):
+        print(request.body)
+        username = json.loads(request.body.decode("utf-8")).get("usr")
+        password = json.loads(request.body.decode("utf-8")).get("pwd")
+        print(f"asldfjlasdkfj {username}")
+        user_obj = User.objects.get(username=username)
+        if user_obj.check_password(password):
+            return JsonResponse({"at":Token.objects.get_or_create(user=user_obj)[0].key})
+        else:
+            return HttpResponse("NOPE")
+
+class Logout(GetUserViewMixin):
+    def get(self,request):
+        if self.token_user:
+            t = Token.objects.get(user=self.token_user)
+            t.delete()
+            return HttpResponse("BYE")
+        else:
+            return HttpResponse("Why would you even do that")
