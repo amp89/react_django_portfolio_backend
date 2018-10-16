@@ -26,19 +26,19 @@ class GetUserViewMixin(View):
         return super(GetUserViewMixin,self).dispatch(request,*args,**kwargs)
 
 
-class GetUserAPIViewMixin(APIView):
-    def dispatch(self,request,*args,**kwargs):
-        if request.user.is_anonymous and request.META.get("HTTP_AUTHORIZATION"):
-            the_key = request.META.get("HTTP_AUTHORIZATION").split(" ")[-1]
-            print("..................")
-            print(the_key)
-            self.token_user = Token.objects.get(key=the_key).user
-            print(f"the token user iiiiiissss {self.token_user}")
-        elif not request.user.is_anonymous and request.user:
-            self.token_user = request.user
-        else:
-            self.token_user = None
-        return super(GetUserViewMixin,self).dispatch(request,*args,**kwargs)
+# class GetUserAPIViewMixin(APIView):
+#     def dispatch(self,request,*args,**kwargs):
+#         if request.user.is_anonymous and request.META.get("HTTP_AUTHORIZATION"):
+#             the_key = request.META.get("HTTP_AUTHORIZATION").split(" ")[-1]
+#             print("..................")
+#             print(the_key)
+#             self.token_user = Token.objects.get(key=the_key).user
+#             print(f"the token user iiiiiissss {self.token_user}")
+#         elif not request.user.is_anonymous and request.user:
+#             self.token_user = request.user
+#         else:
+#             self.token_user = None
+#         return super(GetUserViewMixin,self).dispatch(request,*args,**kwargs)
 
 
 
@@ -101,3 +101,20 @@ class Logout(GetUserViewMixin):
             return HttpResponse("BYE")
         else:
             return HttpResponse("Why would you even do that")
+
+class MessageView(GetUserViewMixin):
+    def post(self,request):
+        request_dict = json.loads(request.body.decode("utf-8"))
+        subject = request_dict.get("subject")
+        message_body = request_dict.get("body")
+        if self.token_user:
+            message_obj = Message(
+                user=self.token_user,
+                subject=subject,
+                body=message_body
+            )
+            message_obj.save()
+            return HttpResponse("HI")
+        else:
+            return HttpResponse("login first plz")
+        

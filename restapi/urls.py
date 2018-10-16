@@ -23,6 +23,7 @@ urlpatterns = [
     path('connect/', csrf_exempt(ContactInfoView.as_view())),
     path('info/', csrf_exempt(SiteInfoView.as_view())),
     path('projects/', csrf_exempt(ProjectView.as_view())),
+    path('message/', csrf_exempt(MessageView.as_view())),
     
     path('login/', csrf_exempt(Login.as_view())),
     path('logout/', csrf_exempt(Logout.as_view())),
