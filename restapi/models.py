@@ -32,7 +32,7 @@ class SiteInfo(SingletonModel):
     about = models.TextField(blank=True)
 
 class Technology(models.Model):
-    name = models.CharField(max_length=250, blank=False)
+    name = models.CharField(max_length=250, blank=False, unique=True)
 
 class Project(models.Model):
     title = models.CharField(max_length=2000, blank=False)
@@ -42,6 +42,7 @@ class Project(models.Model):
     image = models.CharField(max_length=2000,blank=True)
     code_link = models.CharField(max_length=2000,blank=True)
     technologies = models.ManyToManyField("Technology", related_name="projects")
+    datetime = models.DateTimeField(blank=True, null=True)
 
 
 class Message(models.Model):
