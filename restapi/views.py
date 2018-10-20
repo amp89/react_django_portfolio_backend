@@ -98,10 +98,17 @@ class Login(View):
                     "at":Token.objects.get_or_create(user=user_obj)[0].key,
                     "username":user_obj.username,
                     "firstname":user_obj.first_name,
-                    "lastname":user_obj.last_name
+                    "lastname":user_obj.last_name,
+                    "loggedIn":True,
                 })
         else:
-            return HttpResponse("NOPE")
+            return JsonResponse({
+                    "at":None,
+                    "username":None,
+                    "firstname":None,
+                    "lastname":None,
+                    "loggedIn":False,
+                })
 
 class Logout(GetUserViewMixin):
     def get(self,request):
