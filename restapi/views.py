@@ -87,7 +87,7 @@ class SiteInfoView(View):
             "photo_3_link":site_info_object.photo_3_link,
             "about":site_info_object.about,
             "site_title":site_title,
-            
+
             "site_author":site_author,
         }
         return JsonResponse(response_dict)
@@ -176,9 +176,9 @@ class MessageView(GetUserViewMixin):
                 body=message_body
             )
             message_obj.save()
-            return HttpResponse("HI")
+            return JsonResponse({"result":["Message Sent"]})
         else:
-            return HttpResponse("login first plz")
+            return JsonResponse({"result":["Please Login and Try Agin"]})
 
 class SignupView(View):
     def post(self, request):
