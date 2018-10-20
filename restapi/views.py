@@ -9,6 +9,7 @@ from rest_framework.authtoken.models import Token
 from .models import *
 from django.contrib.auth.models import User
 import json
+from django.conf import settings
 
 class GetUserViewMixin(View):
     def dispatch(self,request,*args,**kwargs):
@@ -67,11 +68,15 @@ class ContactInfoView(GetUserViewMixin):
 class SiteInfoView(View):
     def get(self,request):
         site_info_object = SiteInfo.load()
+        site_title = settings.SITE_TITLE
+        site_author = settings.SITE_AUTHOR
         response_dict = {
             "photo_1_link":site_info_object.photo_1_link,
             "photo_2_link":site_info_object.photo_2_link,
             "photo_3_link":site_info_object.photo_3_link,
-            "about":site_info_object.about
+            "about":site_info_object.about,
+            "site_title":site_title,
+            "SITE_AUTHOR":SITE_AUTHOR,
         }
         return JsonResponse(response_dict)
 
@@ -89,7 +94,12 @@ class Login(View):
         print(f"asldfjlasdkfj {username}")
         user_obj = User.objects.get(username=username)
         if user_obj.check_password(password):
-            return JsonResponse({"at":Token.objects.get_or_create(user=user_obj)[0].key})
+            return JsonResponse({
+                    "at":Token.objects.get_or_create(user=user_obj)[0].key,
+                    "username":user_obj.username,
+                    "firstname":user_obj.first_name,
+                    "lastname":user_obj.last_name
+                })
         else:
             return HttpResponse("NOPE")
 

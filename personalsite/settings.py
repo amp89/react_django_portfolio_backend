@@ -9,23 +9,33 @@ https://docs.djangoproject.com/en/2.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
+from dotenv import load_dotenv
+load_dotenv()
 
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+SITE_TITLE = os.getenv("DJANGO_SITE_TITLE","Portfolio Template")
+SITE_AUTHOR = os.getenv("DJANGO_SITE_AUTHOR","John Portfoliomann")
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 't7%gn4ih9udc(934nb2sg_k^u1%z8!_!u&dp9aw#%fhsg^j&1r'
+SECRET_KEY = os.getenv("DJANGO_SECRET")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if int(os.getenv("DJANGO_DEBUG")) == 1:
+    print("WARNING: DEBUG MODE")
+    DEBUG = True
+else:
+    DEBUG = False
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = [os.getenv("DJANGO_HOSTNAME"),]
 
 
 # Application definition
@@ -51,6 +61,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+if DEBUG == True:
+    INSTALLED_APPS.append('corsheaders')
+    CORS_ORIGIN_ALLOW_ALL = True
+    MIDDLEWARE.insert(0,'corsheaders.middleware.CorsMiddleware')
 
 ROOT_URLCONF = 'personalsite.urls'
 
