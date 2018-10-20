@@ -13,9 +13,19 @@ from django.conf import settings
 
 class GetUserViewMixin(View):
     def dispatch(self,request,*args,**kwargs):
+        print(request.META)
+        print(request.body)
+        print(request.GET)
+        print(request.POST)
+        print(request.COOKIES)
+        print(dir(request.META))
+        print(dir(request))
+        print("reqmeth: ", request.method)
         if request.user.is_anonymous and request.META.get("HTTP_AUTHORIZATION"):
             the_key = request.META.get("HTTP_AUTHORIZATION").split(" ")[-1]
-            print("..................")
+            the_other_key = request.META.get("HTTP_AUTHORIZATION").split(" ")[-1]
+            print(f"..................the key ...................... {the_key}")
+            print(f"..................the .. other ... key ...................... {the_other_key}")
             print(the_key)
             self.token_user = Token.objects.get(key=the_key).user
             print(f"the token user iiiiiissss {self.token_user}")
@@ -23,6 +33,7 @@ class GetUserViewMixin(View):
             print(f"the normal user is.... {request.user}")
             self.token_user = request.user
         else:
+            print("user not found")
             self.token_user = None
         return super(GetUserViewMixin,self).dispatch(request,*args,**kwargs)
 
@@ -111,13 +122,44 @@ class Login(View):
                 })
 
 class Logout(GetUserViewMixin):
+    def options(self,request):
+        print("optoin")
+        response = JsonResponse({"wtf":"ok"})
+        response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+        return response
+
     def get(self,request):
+        print("logout get: {}".format(request.method))
         if self.token_user:
             t = Token.objects.get(user=self.token_user)
             t.delete()
-            return HttpResponse("BYE")
+            response =  JsonResponse({
+                    "at":None,
+                    "username":None,
+                    "firstname":None,
+                    "lastname":None,
+                    "loggedIn":False,
+                })
+            response["Access-Control-Allow-Origin"] = "*"
+            response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+            response["Access-Control-Max-Age"] = "1000"
+            response["Access-Control-Allow-Headers"] = "X-Requested-With, Content-Type"
+            print("logging out?")
+            return response
         else:
-            return HttpResponse("Why would you even do that")
+            response = JsonResponse({
+                    "at":None,
+                    "username":None,
+                    "firstname":None,
+                    "lastname":None,
+                    "loggedIn":False,
+                })
+            response["Access-Control-Allow-Origin"] = "*"
+            response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+            response["Access-Control-Max-Age"] = "1000"
+            response["Access-Control-Allow-Headers"] = "X-Requested-With, Content-Type"
+            print("not logging out?")
+            return response
 
 class MessageView(GetUserViewMixin):
     def post(self,request):

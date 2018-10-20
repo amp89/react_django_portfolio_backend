@@ -14,6 +14,34 @@ load_dotenv()
 
 import os
 
+
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+)
+
+CORS_ALLOW_HEADERS = (
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'Authorization',
+    'Token',
+    'Authorization:',
+    'Authorization: Token',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+)
+CORS_ALLOW_CREDENTIALS = True
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -49,12 +77,18 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    
+    'corsheaders',
+
     'restapi',
 ]
 
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', #test
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -62,10 +96,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-if DEBUG == True:
-    INSTALLED_APPS.append('corsheaders')
-    CORS_ORIGIN_ALLOW_ALL = True
-    MIDDLEWARE.insert(0,'corsheaders.middleware.CorsMiddleware')
+# if DEBUG == True:
+print("warning - cors allow all enabled")
+# INSTALLED_APPS.append('corsheaders')
+CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_WHITELIST = (
+#     '*',
+#     'localhost'
+#     'localhost:3000'
+# )
+# MIDDLEWARE.insert(0,'corsheaders.middleware.CorsMiddleware')
 
 ROOT_URLCONF = 'personalsite.urls'
 
