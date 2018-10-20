@@ -41,6 +41,7 @@ class Project(models.Model):
     link = models.CharField(max_length=2000,blank=True)
     image = models.CharField(max_length=2000,blank=True)
     code_link = models.CharField(max_length=2000,blank=True)
+    blog_link = models.CharField(max_length=2000,blank=True)
     technologies = models.ManyToManyField("Technology", related_name="projects")
     datetime = models.DateTimeField(blank=True, null=True)
 

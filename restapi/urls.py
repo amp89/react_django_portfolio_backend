@@ -26,6 +26,7 @@ urlpatterns = [
     path('message/', csrf_exempt(MessageView.as_view())),
     
 
+    path('signup/', csrf_exempt(SignupView.as_view())),
     path('login/', csrf_exempt(Login.as_view())),
     path('logout/', csrf_exempt(Logout.as_view())),
 

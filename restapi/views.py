@@ -87,7 +87,8 @@ class SiteInfoView(View):
             "photo_3_link":site_info_object.photo_3_link,
             "about":site_info_object.about,
             "site_title":site_title,
-            "SITE_AUTHOR":SITE_AUTHOR,
+            
+            "site_author":site_author,
         }
         return JsonResponse(response_dict)
 
@@ -111,6 +112,7 @@ class Login(View):
                     "firstname":user_obj.first_name,
                     "lastname":user_obj.last_name,
                     "loggedIn":True,
+                    "result":[]
                 })
         else:
             return JsonResponse({
@@ -119,7 +121,8 @@ class Login(View):
                     "firstname":None,
                     "lastname":None,
                     "loggedIn":False,
-                })
+                    "result":["Login Failed",]
+                }, safe=False)
 
 class Logout(GetUserViewMixin):
     def options(self,request):
@@ -176,4 +179,39 @@ class MessageView(GetUserViewMixin):
             return HttpResponse("HI")
         else:
             return HttpResponse("login first plz")
+
+class SignupView(View):
+    def post(self, request):
+        request_dict = json.loads(request.body.decode("utf-8"))
+        first_name = request_dict["firstname"]
+        last_name = request_dict["lastname"]
+        email = request_dict["email"]
+        p = request_dict["pwd"]
+        p2 = request_dict["pwd2"]
+        errs = []
+        if p != p2 or len(p) < 8:
+            errs.append("Passwords much match and be over 8 characters")
+        if not first_name:
+            errs.append("First name is required")
+        if not last_name:
+            errs.append("Last name is requred")
+        if not email:
+            errs.append("Email is required")
+        if errs:
+            return JsonResponse({"result":errs}, safe=False)
+        else:
+            u, created = User.objects.get_or_create(
+                username=email,
+                email = email,
+                first_name=first_name,
+                last_name=last_name,
+            )
+            
+            if created:
+                u.set_password(p)
+                return JsonResponse({"result": [f"Thanks, {first_name}! Please login."]}, safe=False)
+            else:
+                return JsonResponse({"result": [f"That email has been taken!"]}, safe=False)
+            
+            
         
