@@ -76,7 +76,7 @@ class ContactInfoView(GetUserViewMixin):
 
         return JsonResponse(contact_info_dict)
 
-class SiteInfoView(View):
+class SiteInfoView(GetUserViewMixin):
     def get(self,request):
         site_info_object = SiteInfo.load()
         site_title = settings.SITE_TITLE
@@ -90,6 +90,8 @@ class SiteInfoView(View):
 
             "site_author":site_author,
         }
+        if self.token_user:
+            response_dict["at"] = self.token_user.token.key
         return JsonResponse(response_dict)
 
 class ProjectView(View):
@@ -176,9 +178,9 @@ class MessageView(GetUserViewMixin):
                 body=message_body
             )
             message_obj.save()
-            return JsonResponse({"result":["Message Sent"]})
+            return JsonResponse({"result":["Message Sent"],"done":True})
         else:
-            return JsonResponse({"result":["Please Login and Try Agin"]})
+            return JsonResponse({"result":["Please Login and Try Agin"],"done":False})
 
 class SignupView(View):
     def post(self, request):
@@ -186,7 +188,7 @@ class SignupView(View):
         first_name = request_dict["firstname"]
         last_name = request_dict["lastname"]
         email = request_dict["email"]
-        p = request_dict["pwd"]
+        p = request_dict["pwd1"]
         p2 = request_dict["pwd2"]
         errs = []
         if p != p2 or len(p) < 8:
