@@ -27,7 +27,10 @@ class GetUserViewMixin(View):
             print(f"..................the key ...................... {the_key}")
             print(f"..................the .. other ... key ...................... {the_other_key}")
             print(the_key)
-            self.token_user = Token.objects.get(key=the_key).user
+            try:
+                self.token_user = Token.objects.get(key=the_key).user
+            except:
+                self.token_user = None
             print(f"the token user iiiiiissss {self.token_user}")
         elif not request.user.is_anonymous and request.user:
             print(f"the normal user is.... {request.user}")
