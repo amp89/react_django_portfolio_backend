@@ -96,16 +96,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# if DEBUG == True:
-print("warning - cors allow all enabled")
-# INSTALLED_APPS.append('corsheaders')
-CORS_ORIGIN_ALLOW_ALL = True
-# CORS_ORIGIN_WHITELIST = (
-#     '*',
-#     'localhost'
-#     'localhost:3000'
-# )
-# MIDDLEWARE.insert(0,'corsheaders.middleware.CorsMiddleware')
+if DEBUG == True:
+    print("warning - cors allow all enabled")
+    # INSTALLED_APPS.append('corsheaders')
+    CORS_ORIGIN_ALLOW_ALL = True
+    # CORS_ORIGIN_WHITELIST = (
+    #     '*',
+    #     'localhost'
+    #     'localhost:3000'
+    # )
+    # MIDDLEWARE.insert(0,'corsheaders.middleware.CorsMiddleware')
 
 ROOT_URLCONF = 'personalsite.urls'
 
