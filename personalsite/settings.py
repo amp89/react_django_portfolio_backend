@@ -63,7 +63,7 @@ else:
     DEBUG = False
 
 
-ALLOWED_HOSTS = [os.getenv("DJANGO_HOSTNAME"),]
+ALLOWED_HOSTS = os.getenv("DJANGO_HOSTNAME").split(",")
 
 
 # Application definition
