@@ -24,15 +24,21 @@ class ContactInfo(SingletonModel):
     blog = models.CharField(max_length=2000, blank=True)
     email = models.CharField(max_length=2000, blank=True)
     phone = models.CharField(max_length=50, blank=True)
+    def __str__(self):
+        return "Contact Information"
 
 class SiteInfo(SingletonModel):
     photo_1_link = models.CharField(max_length=2000, blank=True)
     photo_2_link = models.CharField(max_length=2000, blank=True)
     photo_3_link = models.CharField(max_length=2000, blank=True)
     about = models.TextField(blank=True)
+    def __str__(self):
+        return "Site Information"
 
 class Technology(models.Model):
     name = models.CharField(max_length=250, blank=False, unique=True)
+    def __str__(self):
+        return self.name
 
 class Project(models.Model):
     title = models.CharField(max_length=2000, blank=False)
@@ -44,10 +50,14 @@ class Project(models.Model):
     blog_link = models.CharField(max_length=2000,blank=True)
     technologies = models.ManyToManyField("Technology", related_name="projects")
     datetime = models.DateTimeField(blank=True, null=True)
+    def __str__(self):
+        return self.title
 
 
 class Message(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="messages")
     subject = models.CharField(max_length=1000)
     body = models.TextField()
+    def __str__(self):
+        return f"{self.user}|{self.subject}"
 

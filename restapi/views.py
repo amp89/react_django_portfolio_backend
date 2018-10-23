@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
-# Create your views here.
 from rest_framework import authentication, permissions
 from django.views import View
 from rest_framework.views import APIView
@@ -13,57 +12,23 @@ from django.conf import settings
 
 class GetUserViewMixin(View):
     def dispatch(self,request,*args,**kwargs):
-        print(request.META)
-        print(request.body)
-        print(request.GET)
-        print(request.POST)
-        print(request.COOKIES)
-        print(dir(request.META))
-        print(dir(request))
-        print("reqmeth: ", request.method)
         if request.user.is_anonymous and request.META.get("HTTP_AUTHORIZATION"):
             the_key = request.META.get("HTTP_AUTHORIZATION").split(" ")[-1]
             the_other_key = request.META.get("HTTP_AUTHORIZATION").split(" ")[-1]
-            print(f"..................the key ...................... {the_key}")
-            print(f"..................the .. other ... key ...................... {the_other_key}")
-            print(the_key)
             try:
                 self.token_user = Token.objects.get(key=the_key).user
             except:
                 self.token_user = None
-            print(f"the token user iiiiiissss {self.token_user}")
         elif not request.user.is_anonymous and request.user:
-            print(f"the normal user is.... {request.user}")
             self.token_user = request.user
         else:
-            print("user not found")
             self.token_user = None
         return super(GetUserViewMixin,self).dispatch(request,*args,**kwargs)
-
-
-# class GetUserAPIViewMixin(APIView):
-#     def dispatch(self,request,*args,**kwargs):
-#         if request.user.is_anonymous and request.META.get("HTTP_AUTHORIZATION"):
-#             the_key = request.META.get("HTTP_AUTHORIZATION").split(" ")[-1]
-#             print("..................")
-#             print(the_key)
-#             self.token_user = Token.objects.get(key=the_key).user
-#             print(f"the token user iiiiiissss {self.token_user}")
-#         elif not request.user.is_anonymous and request.user:
-#             self.token_user = request.user
-#         else:
-#             self.token_user = None
-#         return super(GetUserViewMixin,self).dispatch(request,*args,**kwargs)
-
-
 
 
 class ContactInfoView(GetUserViewMixin):
     authentication_classes = (authentication.TokenAuthentication,)
     def get(self,request):
-        print(request.META)
-        print(self.token_user)
-
         contact_info_object = ContactInfo.load()
         contact_info_dict = {
             "github":contact_info_object.github,
@@ -105,10 +70,8 @@ class ProjectView(View):
 
 class Login(View):
     def post(self,request):
-        print(request.body)
         username = json.loads(request.body.decode("utf-8")).get("usr")
         password = json.loads(request.body.decode("utf-8")).get("pwd")
-        print(f"asldfjlasdkfj {username}")
         user_obj = User.objects.get(username=username)
         if user_obj.check_password(password):
             return JsonResponse({
@@ -131,13 +94,13 @@ class Login(View):
 
 class Logout(GetUserViewMixin):
     def options(self,request):
-        print("optoin")
+
         response = JsonResponse({"wtf":"ok"})
         response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
         return response
 
     def get(self,request):
-        print("logout get: {}".format(request.method))
+
         if self.token_user:
             t = Token.objects.get(user=self.token_user)
             t.delete()
@@ -152,7 +115,7 @@ class Logout(GetUserViewMixin):
             response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
             response["Access-Control-Max-Age"] = "1000"
             response["Access-Control-Allow-Headers"] = "X-Requested-With, Content-Type"
-            print("logging out?")
+
             return response
         else:
             response = JsonResponse({
@@ -211,7 +174,6 @@ class SignupView(View):
                 first_name=first_name,
                 last_name=last_name,
             )
-            
             if created:
                 u.set_password(p)
                 return JsonResponse({"result": [f"Thanks, {first_name}! Please login."]}, safe=False)
